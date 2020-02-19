@@ -2,13 +2,13 @@ use super::expression::{CompiledExpression, FunctionFrameInfo};
 use super::utils::{add_internal_types, append_vmctx_info, get_function_frame_info};
 use super::AddressTransform;
 use crate::read_debuginfo::WasmFileInfo;
+use crate::types::{get_vmctx_value_label, ModuleVmctxInfo, ValueLabelsRanges};
 use anyhow::Error;
 use cranelift_entity::EntityRef;
 use gimli::write;
 use gimli::{self, LineEncoding};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
-use crate::types::{get_vmctx_value_label, ModuleVmctxInfo, ValueLabelsRanges};
 
 pub use crate::read_debuginfo::{DebugInfoData, FunctionMetadata, WasmType};
 

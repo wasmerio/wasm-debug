@@ -5,12 +5,12 @@ use super::line_program::clone_line_program;
 use super::range_info_builder::RangeInfoBuilder;
 use super::utils::{add_internal_types, append_vmctx_info, get_function_frame_info};
 use super::{DebugInputContext, Reader, TransformError};
-use cranelift_entity::EntityRef;
+use crate::types::{ModuleVmctxInfo, ValueLabelsRanges};
 use anyhow::Error;
+use cranelift_entity::EntityRef;
 use gimli::write;
 use gimli::{AttributeValue, DebuggingInformationEntry, Unit, UnitOffset};
 use std::collections::{HashMap, HashSet};
-use crate::types::{ModuleVmctxInfo, ValueLabelsRanges};
 
 pub(crate) type PendingDieRef = (write::UnitEntryId, gimli::DwAt, UnitOffset);
 

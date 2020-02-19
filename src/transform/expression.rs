@@ -1,9 +1,11 @@
 use super::address_transform::AddressTransform;
+use crate::types::{
+    get_vmctx_value_label, DefinedFuncIndex, RegUnit, ValueLabel, ValueLabelsRangesInner, ValueLoc,
+};
 use anyhow::Error;
-use crate::types::{RegUnit, ValueLabelsRangesInner, ValueLabel, ValueLoc, DefinedFuncIndex, get_vmctx_value_label};
+use cranelift_entity::EntityRef;
 use gimli::{self, write, Expression, Operation, Reader, ReaderOffset, Register, X86_64};
 use more_asserts::{assert_le, assert_lt};
-use cranelift_entity::EntityRef;
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]

@@ -1,9 +1,9 @@
 use super::address_transform::AddressTransform;
 use super::{DebugInputContext, Reader};
-use anyhow::Error;
-use gimli::{write, AttributeValue, DebuggingInformationEntry, RangeListsOffset};
-use cranelift_entity::EntityRef;
 use crate::types::DefinedFuncIndex;
+use anyhow::Error;
+use cranelift_entity::EntityRef;
+use gimli::{write, AttributeValue, DebuggingInformationEntry, RangeListsOffset};
 use more_asserts::assert_lt;
 
 pub(crate) enum RangeInfoBuilder {

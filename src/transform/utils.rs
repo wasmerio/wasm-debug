@@ -1,7 +1,7 @@
 use super::address_transform::AddressTransform;
-use anyhow::Error;
 use super::expression::{CompiledExpression, FunctionFrameInfo};
-use crate::types::{DefinedFuncIndex, ValueLabelsRanges, ModuleVmctxInfo};
+use crate::types::{DefinedFuncIndex, ModuleVmctxInfo, ValueLabelsRanges};
+use anyhow::Error;
 use gimli::write;
 
 pub(crate) fn add_internal_types(

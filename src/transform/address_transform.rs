@@ -1,11 +1,11 @@
+use crate::types::{CompiledFunctionData, DefinedFuncIndex, ModuleAddressMap, SourceLoc};
 use crate::WasmFileInfo;
-use cranelift_entity::{PrimaryMap, EntityRef};
+use cranelift_entity::{EntityRef, PrimaryMap};
 use gimli::write;
 use more_asserts::assert_le;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::iter::FromIterator;
-use crate::types::{CompiledFunctionData, ModuleAddressMap, SourceLoc, DefinedFuncIndex};
 
 pub type GeneratedAddress = usize;
 pub type WasmAddress = u64;
@@ -492,10 +492,12 @@ impl AddressTransform {
 mod tests {
     use super::{build_function_lookup, get_wasm_code_offset, AddressTransform};
     use crate::read_debuginfo::WasmFileInfo;
+    use crate::types::{
+        CompiledFunctionData, CompiledInstructionData, ModuleAddressMap, SourceLoc,
+    };
     use cranelift_entity::PrimaryMap;
     use gimli::write::Address;
     use std::iter::FromIterator;
-    use crate::types::{CompiledFunctionData, CompiledInstructionData, ModuleAddressMap, SourceLoc};
 
     #[test]
     fn test_get_wasm_code_offset() {

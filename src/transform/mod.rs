@@ -1,4 +1,5 @@
 use crate::gc::build_dependencies;
+use crate::types::{ModuleAddressMap, ModuleVmctxInfo, ValueLabelsRanges};
 use crate::DebugInfoData;
 use anyhow::Error;
 use gimli::{
@@ -9,7 +10,6 @@ use simulate::generate_simulated_dwarf;
 use std::collections::HashSet;
 use thiserror::Error;
 use unit::clone_unit;
-use crate::types::{ModuleAddressMap, ModuleVmctxInfo, ValueLabelsRanges};
 
 pub use address_transform::AddressTransform;
 

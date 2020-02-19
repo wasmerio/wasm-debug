@@ -18,11 +18,11 @@
 
 #![allow(clippy::cast_ptr_alignment)]
 
+use crate::types::{ModuleAddressMap, ModuleVmctxInfo, ValueLabelsRanges};
 use anyhow::Error;
 use faerie::{Artifact, Decl};
 use more_asserts::assert_gt;
 use target_lexicon::{BinaryFormat, Triple};
-use crate::types::{ModuleAddressMap, ModuleVmctxInfo, ValueLabelsRanges};
 
 pub use crate::read_debuginfo::{read_debuginfo, DebugInfoData, WasmFileInfo};
 pub use crate::transform::transform_dwarf;
@@ -31,8 +31,8 @@ pub use crate::write_debuginfo::{emit_dwarf, ResolvedSymbol, SymbolResolver};
 mod gc;
 mod read_debuginfo;
 mod transform;
-mod write_debuginfo;
 pub mod types;
+mod write_debuginfo;
 
 struct FunctionRelocResolver {}
 impl SymbolResolver for FunctionRelocResolver {
