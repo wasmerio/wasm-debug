@@ -2,6 +2,8 @@
 name = "wasm-debug"
 version = "0.1.0"
 authors = ["The Wasmer Engineering Team <engineering@wasmer.io>"]
+repository = "https://github.com/wasmerio/wasm-debug"
+description = "Generic Wasm DWARF transformation crate"
 license = "Apache-2.0 WITH LLVM-exception"
 categories = ["wasm", "development-tools::debugging"]
 keywords = ["webassembly", "wasm", "debuginfo", "dwarf", "debugger"]
