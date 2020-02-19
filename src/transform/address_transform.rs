@@ -1,11 +1,11 @@
+use crate::types::{CompiledFunctionData, DefinedFuncIndex, ModuleAddressMap, SourceLoc};
 use crate::WasmFileInfo;
-use cranelift_entity::{PrimaryMap, EntityRef};
+use cranelift_entity::{EntityRef, PrimaryMap};
 use gimli::write;
 use more_asserts::assert_le;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
 use std::iter::FromIterator;
-use crate::types::{CompiledFunctionData, ModuleAddressMap, SourceLoc, DefinedFuncIndex};
 
 pub type GeneratedAddress = usize;
 pub type WasmAddress = u64;
@@ -84,31 +84,31 @@ fn build_function_lookup(
     ft: &CompiledFunctionData,
     code_section_offset: u64,
 ) -> (WasmAddress, WasmAddress, FuncLookup) {
-    assert_le!(code_section_offset, ft.start.get() as u64);
-    let fn_start = get_wasm_code_offset(ft.start, code_section_offset);
-    let fn_end = get_wasm_code_offset(ft.end, code_section_offset);
+    assert_le!(code_section_offset, ft.start_srcloc.get() as u64);
+    let fn_start = get_wasm_code_offset(ft.start_srcloc, code_section_offset);
+    let fn_end = get_wasm_code_offset(ft.end_srcloc, code_section_offset);
     assert_le!(fn_start, fn_end);
 
     // Build ranges of continuous source locations. The new ranges starts when
     // non-descending order is interrupted. Assuming the same origin location can
     // be present in multiple ranges.
     let mut range_wasm_start = fn_start;
-    let mut range_gen_start = ft.compiled_offset;
+    let mut range_gen_start = ft.body_offset;
     let mut last_wasm_pos = range_wasm_start;
     let mut ranges = Vec::new();
     let mut ranges_index = BTreeMap::new();
     let mut current_range = Vec::new();
     for t in &ft.instructions {
-        if t.loc.is_default() {
+        if t.srcloc.is_default() {
             continue;
         }
 
-        let offset = get_wasm_code_offset(t.loc, code_section_offset);
+        let offset = get_wasm_code_offset(t.srcloc, code_section_offset);
         assert_le!(fn_start, offset);
         assert_le!(offset, fn_end);
 
-        let inst_gen_start = t.offset;
-        let inst_gen_end = t.offset + t.length;
+        let inst_gen_start = t.code_offset;
+        let inst_gen_end = t.code_offset + t.code_len;
 
         if last_wasm_pos > offset {
             // Start new range.
@@ -132,7 +132,7 @@ fn build_function_lookup(
         });
         last_wasm_pos = offset;
     }
-    let last_gen_addr = ft.compiled_offset + ft.compiled_size;
+    let last_gen_addr = ft.body_offset + ft.body_len;
     ranges_index.insert(range_wasm_start, ranges.len());
     ranges.push(Range {
         wasm_start: range_wasm_start,
@@ -176,12 +176,12 @@ fn build_function_addr_map(
     for (_, ft) in at {
         let mut fn_map = Vec::new();
         for t in &ft.instructions {
-            if t.loc.is_default() {
+            if t.srcloc.is_default() {
                 continue;
             }
-            let offset = get_wasm_code_offset(t.loc, code_section_offset);
+            let offset = get_wasm_code_offset(t.srcloc, code_section_offset);
             fn_map.push(AddressMap {
-                generated: t.offset,
+                generated: t.code_offset,
                 wasm: offset,
             });
         }
@@ -194,10 +194,10 @@ fn build_function_addr_map(
         }
 
         map.push(FunctionMap {
-            offset: ft.compiled_offset,
-            len: ft.compiled_size,
-            wasm_start: get_wasm_code_offset(ft.start, code_section_offset),
-            wasm_end: get_wasm_code_offset(ft.end, code_section_offset),
+            offset: ft.body_offset,
+            len: ft.body_len,
+            wasm_start: get_wasm_code_offset(ft.start_srcloc, code_section_offset),
+            wasm_end: get_wasm_code_offset(ft.end_srcloc, code_section_offset),
             addresses: fn_map.into_boxed_slice(),
         });
     }
@@ -492,10 +492,12 @@ impl AddressTransform {
 mod tests {
     use super::{build_function_lookup, get_wasm_code_offset, AddressTransform};
     use crate::read_debuginfo::WasmFileInfo;
+    use crate::types::{
+        CompiledFunctionData, CompiledInstructionData, ModuleAddressMap, SourceLoc,
+    };
     use cranelift_entity::PrimaryMap;
     use gimli::write::Address;
     use std::iter::FromIterator;
-    use crate::types::{CompiledFunctionData, CompiledInstructionData, ModuleAddressMap, SourceLoc};
 
     #[test]
     fn test_get_wasm_code_offset() {

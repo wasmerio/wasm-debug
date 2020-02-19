@@ -1,7 +1,7 @@
 //! Data structures and functions used to get metadata into a format this
 //! crate can understand.
 
-use cranelift_entity::{PrimaryMap, EntityRef};
+use cranelift_entity::{EntityRef, PrimaryMap};
 use std::collections::HashMap;
 
 /// Index of a function.
@@ -45,29 +45,30 @@ pub struct CompiledFunctionData {
     /// Information about the instructions in this function in order.
     pub instructions: Vec<CompiledInstructionData>,
     /// The start location in the Wasm of this function.
-    pub start: SourceLoc,
+    pub start_srcloc: SourceLoc,
     /// The end location in the Wasm of this function.
-    pub end: SourceLoc,
+    pub end_srcloc: SourceLoc,
     /// The offset into the compiled code where this function is.
-    pub compiled_offset: usize,
+    pub body_offset: usize,
     /// The size of the compiled function.
-    pub compiled_size: usize,
+    pub body_len: usize,
 }
 
 /// Information about a compiled WebAssembly instruction.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct CompiledInstructionData {
     /// The location in the Wasm of the instruction.
-    pub loc: SourceLoc,
+    pub srcloc: SourceLoc,
     /// The length of the instruction in bytes.
-    pub length: usize,
+    pub code_len: usize,
     /// The offset from the start of the function? (TODO: figure out what this is).
-    pub offset: usize,
+    pub code_offset: usize,
 }
 
 /// Build a [`ModuleAddressMap`].
 pub fn create_module_address_map<'a, I>(info: I) -> ModuleAddressMap
-where I: Iterator<Item = &'a CompiledFunctionData>
+where
+    I: Iterator<Item = &'a CompiledFunctionData>,
 {
     let mut map = PrimaryMap::new();
     for cfd in info {
@@ -147,7 +148,9 @@ pub struct ValueLocRange {
 
 /// Create a [`ValueLabelsRanges`] from data.
 pub fn build_values_ranges<'a, I>(vlri_iter: I) -> ValueLabelsRanges
-where I: Iterator<Item = &'a ValueLabelsRangesInner> {
+where
+    I: Iterator<Item = &'a ValueLabelsRangesInner>,
+{
     let mut map = PrimaryMap::new();
 
     for i in vlri_iter {
@@ -183,7 +186,8 @@ pub struct ModuleVmctxInfo {
 
 impl ModuleVmctxInfo {
     pub fn new<'a, I>(memory_offset: i64, vmctx_size: i64, stack_slot_offsets: I) -> Self
-    where I: Iterator<Item = &'a Vec<Option<i32>>>
+    where
+        I: Iterator<Item = &'a Vec<Option<i32>>>,
     {
         let mut map = PrimaryMap::new();
         for o in stack_slot_offsets {
