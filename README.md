@@ -8,7 +8,7 @@ This project is a fork of [`wasmtime-debug`][] that is not dependent
 on any runtime.
 
 When applying fixes to this crate, please send a copy of the patch to
-[`wasmtime-debug][] if applicable.
+[`wasmtime-debug`][] if applicable.
 
 When merging in fixes found in [`wasmtime-debug`] please be mindful of
 updating copyright notices and possible license changes.
